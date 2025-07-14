@@ -2,7 +2,11 @@
 
 A Python script that converts images to base blue-tone compositions.
 
-![megumi](./images/megumi.jpg "Megumi") ![megumi_based](./images/megumi_based.jpg "Megumi based")
+default
+![megumi](./images/megumi.jpg "Megumi")
+
+based
+![megumi_based](./images/megumi_based.jpg "Megumi based")
 
 ## Installation
 
