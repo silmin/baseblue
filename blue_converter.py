@@ -46,6 +46,31 @@ def apply_blue_filter(image):
     
     return result
 
+def convert_to_blue_white_monochrome(image):
+    """
+    Convert image to blue and white monochrome composition
+    """
+    # Convert to grayscale first
+    gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+    
+    # Create blue and white color mapping
+    # Dark areas become blue, light areas become white
+    blue_white = np.zeros_like(image)
+    
+    # Define blue color (BGR format)
+    blue_color = np.array([255, 100, 50])  # Deep blue
+    white_color = np.array([255, 255, 255])  # White
+    
+    # Normalize grayscale to 0-1 range for interpolation
+    gray_normalized = gray.astype(np.float32) / 255.0
+    
+    # Interpolate between blue and white based on brightness
+    for i in range(3):  # For each BGR channel
+        blue_white[:, :, i] = (blue_color[i] * (1 - gray_normalized) + 
+                              white_color[i] * gray_normalized).astype(np.uint8)
+    
+    return blue_white
+
 def process_image(input_path, output_path, method='enhance'):
     """
     Process single image and convert to blue tones
@@ -60,6 +85,8 @@ def process_image(input_path, output_path, method='enhance'):
         result = convert_to_blue_tones(image)
     elif method == 'filter':
         result = apply_blue_filter(image)
+    elif method == 'monochrome':
+        result = convert_to_blue_white_monochrome(image)
     else:
         # Combine both methods
         temp = convert_to_blue_tones(image)
@@ -73,7 +100,7 @@ def main():
     parser = argparse.ArgumentParser(description='Convert images to blue-toned compositions')
     parser.add_argument('input', help='Input image file or directory')
     parser.add_argument('-o', '--output', help='Output file or directory (default: adds _blue suffix)')
-    parser.add_argument('-m', '--method', choices=['enhance', 'filter', 'both'], 
+    parser.add_argument('-m', '--method', choices=['enhance', 'filter', 'monochrome', 'both'], 
                        default='both', help='Conversion method (default: both)')
     
     args = parser.parse_args()
